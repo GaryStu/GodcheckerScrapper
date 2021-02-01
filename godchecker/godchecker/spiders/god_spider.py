@@ -18,10 +18,10 @@ class GodSpider(scrapy.Spider):
         yield response.follow(god_page_links, self.parse_god)
 
     def parse_god(self, response):
-        def extract_with_css(query):
-            return response.css(query).get(default='').strip()
+        # def extract_with_css(query):
+            # return response.css(query).get(default='').strip()
         
-        attributes = [ attr.strip()[:-1] for attr in response.css('div.pullout-panel p::text').getall()]
+        attributes = [ attr.strip()[:-1] for attr in response.css('div.pullout-panel p::text').getall() if len(attr.strip()) > 0]
         values = response.css('div.pullout-panel strong::text').getall()
         facts_and_figures = dict(zip(attributes, values))
         yield facts_and_figures
