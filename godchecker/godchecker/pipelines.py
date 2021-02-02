@@ -49,9 +49,12 @@ class GodcheckerPipeline(object):
                 + "(name, pronounciation, alt_names, gender, type, area_or_people, celeb_or_feast_day,"
                 + "in_charge_of, area_of_expertise, role, good_evil, popularity_index) "
                 + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (item['name'], item['pronounciation'], item['alt_names'], item['gender'], item['type'],
-                item['area_or_people'], item['celeb_or_feast_day'], item['in_charge_of'], item['area_of_expertise'],
-                item['role'], item['good_evil'], item['popularity_index'])
+                # (item['name'], item['pronounciation'], item['alt_names'], item['gender'], item['type'],
+                # item['area_or_people'], item['celeb_or_feast_day'], item['in_charge_of'], item['area_of_expertise'],
+                # item['role'], item['good_evil'], item['popularity_index'])
+                (item.get('name'), item.get('pronounciation'), item.get('alt_names'), item.get('gender'), item.get('type'),
+                item.get('area_or_people'), item.get('celeb_or_feast_day'), item.get('in_charge_of'), item.get('area_of_expertise'),
+                item.get('role'), item.get('good_evil'), item.get('popularity_index'))
             )
 
             self.connection.commit()
