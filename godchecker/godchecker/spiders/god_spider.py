@@ -1,21 +1,23 @@
 import scrapy
 import logging
+from scrapy.loader import ItemLoader
 from godchecker.items import GodItem
 
-# mapping = {
-#     "Name": "name",
-#     "Pronunciation": "pronounciation",
-#     "Alternative names": "",
-#     "Gender": "",
-#     "Type": "",
-#     "Area or people": "",
-#     "Celebration or Feast Day": "",
-#     "In charge of": "",
-#     "Area of expertise": "",
-#     "Role": "",
-#     "Good/Evil Rating": "",
-#     "Popularity index": ""
-# }
+# Mapping between the scrapped str and the table attributes
+rename_mapping = {
+    "Name": "name",
+    "Pronunciation": "pronounciation",
+    "Alternative names": "alt_name",
+    "Gender": "gender",
+    "Type": "type",
+    "Area or people": "area_or_people",
+    "Celebration or Feast Day": "celeb_or_feast_day",
+    "In charge of": "in_charge_of",
+    "Area of expertise": "area_of_expertise",
+    "Role": "role",
+    "Good/Evil Rating": "good_evil",
+    "Popularity index": "popularity_index"
+}
 class GodSpider(scrapy.Spider):
     name = 'godchecker'
 
@@ -38,7 +40,14 @@ class GodSpider(scrapy.Spider):
         attributes = [attr.strip()[:-1] for attr in response.css('div.pullout-panel.vitalsbox p::text').getall() if len(attr.strip()) > 0]
         values = response.css('div.pullout-panel strong::text').getall()
         facts_and_figures = dict(zip(attributes, values))
+
+        loader = ItemLoader(item=GodItem())
+        for key, value in facts_and_figures.items():
+            loader.add_value(rename_mapping[key], value)
+        god_item = loader.load_item()
+        
         yield facts_and_figures
+
 
         
 

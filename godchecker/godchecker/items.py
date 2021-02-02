@@ -17,7 +17,7 @@ class GodItem(Item):
     type = Field()
     area_or_people = Field()
     celeb_or_feast_day = Field()
-    in_charge_of = Field()
+    in_charge_of : Optional[str]= Field(default=None)
     area_of_expertise = Field()
     role = Field()
     good_evil = Field()
