@@ -6,8 +6,11 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+import sqlite3
 
 
 class GodcheckerPipeline:
+    table_name = 'gods'
+
     def process_item(self, item, spider):
         return item

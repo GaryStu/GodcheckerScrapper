@@ -3,10 +3,22 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+from scrapy.item import Item, Field
 
 
-class GodcheckerItem(scrapy.Item):
+class GodItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    # pass
+    name = Field()
+    pronounciation = Field()
+    alt_names = Field()
+    gender = Field()
+    type = Field()
+    area_or_people = Field()
+    celeb_or_feast_day = Field()
+    in_charge_of = Field()
+    area_of_expertise = Field()
+    role = Field()
+    good_evil = Field()
+    popularity_index = Field()
