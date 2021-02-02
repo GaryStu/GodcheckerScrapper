@@ -4,6 +4,7 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 from scrapy.item import Item, Field
+from scrapy.loader.processors import TakeFirst
 from typing import Optional
 
 
@@ -11,15 +12,43 @@ class GodItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     # pass
-    name = Field()
-    pronounciation = Field()
-    alt_names = Field()
-    gender = Field()
-    type = Field()
-    area_or_people = Field()
-    celeb_or_feast_day = Field()
-    in_charge_of : Optional[str]= Field(default=None)
-    area_of_expertise = Field()
-    role = Field()
-    good_evil = Field()
-    popularity_index = Field()
+    name = Field(
+        output_processor=TakeFirst()
+    )
+    pronounciation = Field(
+        output_processor=TakeFirst()
+    )
+    alt_names = Field(
+        output_processor=TakeFirst()
+    )
+    gender = Field(
+        output_processor=TakeFirst()
+    )
+    type = Field(
+        output_processor=TakeFirst()
+    )
+    area_or_people = Field(
+        output_processor=TakeFirst()
+    )
+    celeb_or_feast_day = Field(
+        output_processor=TakeFirst()
+    )
+    in_charge_of : Optional[str]= Field(
+        default=None, 
+        output_processor=TakeFirst()
+    )
+    area_of_expertise = Field(
+        output_processor=TakeFirst()
+    )
+    role = Field(
+        output_processor=TakeFirst()
+    )
+    good_evil = Field(
+        output_processor=TakeFirst()
+    )
+    popularity_index = Field(
+        output_processor=TakeFirst()
+    )
+    birth_death_dates = Field(
+        output_processor=TakeFirst()
+    )

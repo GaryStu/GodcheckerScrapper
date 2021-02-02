@@ -26,20 +26,21 @@ class GodcheckerPipeline(object):
             + "alt_names TEXT,"
             + "gender TEXT NOT NULL,"
             + "type TEXT NOT NULL,"
-            + "area_or_people TEXT NOT NULL,"
+            + "area_or_people TEXT,"
             + "celeb_or_feast_day TEXT NOT NULL,"
-            + "in_charge_of TEXT NOT NULL,"
-            + "area_of_expertise TEXT NOT NULL,"
-            + "role TEXT NOT NULL,"
+            + "in_charge_of TEXT,"
+            + "area_of_expertise TEXT,"
+            + "role TEXT,"
             + "good_evil TEXT NOT NULL,"
-            + "popularity_index TEXT NOT NULL"
+            + "popularity_index TEXT,"
+            + "birth_death_dates TEXT"
             + ");"
         )
         self.connection.commit()
 
     def process_item(self, item, spider):
-        logging.debug(f'{item}')
-        self.cursor.execute("SELECT * FROM gods WHERE name=?", item['name'])
+        # logging.debug(f'{item}')
+        self.cursor.execute("SELECT * FROM gods WHERE name=?", (item['name'],))
         result = self.cursor.fetchone()
         if result:
             logging.debug(f'Item is already in database: {item}')
