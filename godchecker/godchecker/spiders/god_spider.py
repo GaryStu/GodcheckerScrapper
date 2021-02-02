@@ -7,7 +7,7 @@ from godchecker.items import GodItem
 rename_mapping = {
     "Name": "name",
     "Pronunciation": "pronounciation",
-    "Alternative names": "alt_name",
+    "Alternative names": "alt_names",
     "Gender": "gender",
     "Type": "type",
     "Area or people": "area_or_people",
@@ -41,12 +41,15 @@ class GodSpider(scrapy.Spider):
         values = response.css('div.pullout-panel strong::text').getall()
         facts_and_figures = dict(zip(attributes, values))
 
-        loader = ItemLoader(item=GodItem())
+        loader = ItemLoader(item=GodItem(), response=response)
         for key, value in facts_and_figures.items():
+            logging.debug(f'{key} -> {value}')
+            rename = rename_mapping[key]
+            logging.debug(f'rename: {key} -> {rename}')
             loader.add_value(rename_mapping[key], value)
-        god_item = loader.load_item()
         
-        yield facts_and_figures
+        
+        yield loader.load_item()
 
 
         

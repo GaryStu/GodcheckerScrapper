@@ -38,7 +38,8 @@ class GodcheckerPipeline(object):
         self.connection.commit()
 
     def process_item(self, item, spider):
-        self.cursor.exeucte("SELECT * FROM gods WHERE name=?", item['name'])
+        logging.debug(f'{item}')
+        self.cursor.execute("SELECT * FROM gods WHERE name=?", item['name'])
         result = self.cursor.fetchone()
         if result:
             logging.debug(f'Item is already in database: {item}')
