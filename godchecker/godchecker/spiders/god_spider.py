@@ -18,7 +18,9 @@ rename_mapping = {
     "Role": "role",
     "Good/Evil Rating": "good_evil",
     "Popularity index": "popularity_index",
-    "Birth and Death Dates": "birth_death_dates"
+    "Birth and Death Dates": "birth_death_dates",
+    "Name means": "name_meaning",
+    "Associated with": "associated_with"
 }
 class GodSpider(scrapy.Spider):
     name = 'godchecker'

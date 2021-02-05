@@ -25,17 +25,20 @@ class GodcheckerPipeline(object):
             + "mythology TEXT NOT NULL,"
             + "pronounciation TEXT,"
             + "alt_names TEXT,"
-            + "gender TEXT NOT NULL,"
-            + "type TEXT NOT NULL,"
+            + "gender TEXT,"
+            + "type TEXT,"
             + "area_or_people TEXT,"
-            + "celeb_or_feast_day TEXT NOT NULL,"
+            + "celeb_or_feast_day TEXT,"
             + "in_charge_of TEXT,"
             + "area_of_expertise TEXT,"
             + "role TEXT,"
-            + "good_evil TEXT NOT NULL,"
+            + "good_evil TEXT,"
             + "popularity_index TEXT,"
-            + "birth_death_dates TEXT"
+            + "birth_death_dates TEXT,"
+            + "name_meaning TEXT,"
+            + "associated_with TEXT"
             + ");"
+
         )
         self.connection.commit()
 
@@ -49,11 +52,11 @@ class GodcheckerPipeline(object):
             self.cursor.execute( 
                 "INSERT INTO gods "
                 + "(name, mythology, pronounciation, alt_names, gender, type, area_or_people, celeb_or_feast_day,"
-                + "in_charge_of, area_of_expertise, role, good_evil, popularity_index, birth_death_dates) "
-                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                + "in_charge_of, area_of_expertise, role, good_evil, popularity_index, birth_death_dates, name_meaning, associated_with) "
+                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (item.get('name'), item.get('mythology'), item.get('pronounciation'), item.get('alt_names'), item.get('gender'), item.get('type'),
                 item.get('area_or_people'), item.get('celeb_or_feast_day'), item.get('in_charge_of'), item.get('area_of_expertise'),
-                item.get('role'), item.get('good_evil'), item.get('popularity_index'), item.get('birth_death_dates'))
+                item.get('role'), item.get('good_evil'), item.get('popularity_index'), item.get('birth_death_dates'), item.get('name_meaning'), item.get('associated_with'))
             )
 
             self.connection.commit()
