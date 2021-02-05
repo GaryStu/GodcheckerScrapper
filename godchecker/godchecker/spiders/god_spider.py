@@ -26,7 +26,7 @@ class GodSpider(scrapy.Spider):
 
     def parse(self, response):
         # TODO remove the duplicates for the first ones
-        mythology_page_links = response.css('.pullout-panel li a')
+        mythology_page_links = response.css('#pantheon-list .pullout-panel:not(:first-child) a')
         yield from response.follow_all(mythology_page_links, self.parse_mythology)
 
     def parse_mythology(self, response):
@@ -51,7 +51,3 @@ class GodSpider(scrapy.Spider):
         
         
         yield loader.load_item()
-
-
-        
-
