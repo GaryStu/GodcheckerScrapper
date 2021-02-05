@@ -46,14 +46,14 @@ class GodcheckerPipeline(object):
         if result:
             logging.debug(f'Item is already in database: {item}')
         else :
-            self.cursor.execute(
+            self.cursor.execute( 
                 "INSERT INTO gods "
                 + "(name, mythology, pronounciation, alt_names, gender, type, area_or_people, celeb_or_feast_day,"
-                + "in_charge_of, area_of_expertise, role, good_evil, popularity_index) "
-                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                + "in_charge_of, area_of_expertise, role, good_evil, popularity_index, birth_death_dates) "
+                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (item.get('name'), item.get('mythology'), item.get('pronounciation'), item.get('alt_names'), item.get('gender'), item.get('type'),
                 item.get('area_or_people'), item.get('celeb_or_feast_day'), item.get('in_charge_of'), item.get('area_of_expertise'),
-                item.get('role'), item.get('good_evil'), item.get('popularity_index'))
+                item.get('role'), item.get('good_evil'), item.get('popularity_index'), item.get('birth_death_dates'))
             )
 
             self.connection.commit()

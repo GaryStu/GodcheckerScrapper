@@ -1,5 +1,6 @@
 import scrapy
 import logging
+import re
 from scrapy.loader import ItemLoader
 from godchecker.items import GodItem
 
@@ -38,7 +39,10 @@ class GodSpider(scrapy.Spider):
 
     def parse_god(self, response):
         attributes = [attr.strip()[:-1] for attr in response.css('div.pullout-panel.vitalsbox p::text').getall() if len(attr.strip()) > 0]
-        values = response.css('div.pullout-panel strong::text').getall()
+        # Opt to use re to remove tags since using ::text would remove values that are empty (e.g. Alternative names: <empty>)
+        clean_html_tag = re.compile('<.*?>')
+        values = [re.sub(clean_html_tag, '', value) for value in response.css('div.pullout-panel strong').getall()]
+
         facts_and_figures = dict(zip(attributes, values))
 
         loader = ItemLoader(item=GodItem(), response=response)
