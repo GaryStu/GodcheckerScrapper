@@ -22,6 +22,7 @@ class GodcheckerPipeline(object):
             "CREATE TABLE IF NOT EXISTS gods ("
             + "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
             + "name TEXT UNIQUE NOT NULL,"
+            + "mythology TEXT NOT NULL,"
             + "pronounciation TEXT,"
             + "alt_names TEXT,"
             + "gender TEXT NOT NULL,"
@@ -47,10 +48,10 @@ class GodcheckerPipeline(object):
         else :
             self.cursor.execute(
                 "INSERT INTO gods "
-                + "(name, pronounciation, alt_names, gender, type, area_or_people, celeb_or_feast_day,"
+                + "(name, mythology, pronounciation, alt_names, gender, type, area_or_people, celeb_or_feast_day,"
                 + "in_charge_of, area_of_expertise, role, good_evil, popularity_index) "
-                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (item.get('name'), item.get('pronounciation'), item.get('alt_names'), item.get('gender'), item.get('type'),
+                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (item.get('name'), item.get('mythology'), item.get('pronounciation'), item.get('alt_names'), item.get('gender'), item.get('type'),
                 item.get('area_or_people'), item.get('celeb_or_feast_day'), item.get('in_charge_of'), item.get('area_of_expertise'),
                 item.get('role'), item.get('good_evil'), item.get('popularity_index'))
             )

@@ -25,7 +25,6 @@ class GodSpider(scrapy.Spider):
     start_urls = ['https://www.godchecker.com/']
 
     def parse(self, response):
-        # TODO remove the duplicates for the first ones
         mythology_page_links = response.css('#pantheon-list .pullout-panel:not(:first-child) a')
         yield from response.follow_all(mythology_page_links, self.parse_mythology)
 
@@ -43,11 +42,14 @@ class GodSpider(scrapy.Spider):
         facts_and_figures = dict(zip(attributes, values))
 
         loader = ItemLoader(item=GodItem(), response=response)
+        mythology = response.url.split("/")[3]
+        logging.debug(response.url.split("/"))
+        loader.add_value('mythology', mythology)
+        logging.debug(f'mythology -> {mythology}')
         for key, value in facts_and_figures.items():
             logging.debug(f'{key} -> {value}')
             rename = rename_mapping[key]
             logging.debug(f'rename: {key} -> {rename}')
             loader.add_value(rename_mapping[key], value)
-        
         
         yield loader.load_item()

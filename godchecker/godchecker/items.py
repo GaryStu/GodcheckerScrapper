@@ -4,15 +4,24 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 from scrapy.item import Item, Field
-from scrapy.loader.processors import TakeFirst
+from scrapy.loader.processors import MapCompose, TakeFirst
 from typing import Optional
 
+# native-american-mythology -> "native american"
+def parse_mythology(text):
+    splitText = text.split('-')
+    delimiter = " "
+    return delimiter.join(splitText[0:-1])
 
 class GodItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     # pass
     name = Field(
+        output_processor=TakeFirst()
+    )
+    mythology = Field(
+        input_processor=MapCompose(parse_mythology),
         output_processor=TakeFirst()
     )
     pronounciation = Field(
