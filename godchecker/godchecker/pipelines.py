@@ -38,7 +38,6 @@ class GodcheckerPipeline(object):
             + "name_meaning TEXT,"
             + "associated_with TEXT"
             + ");"
-
         )
         self.connection.commit()
 
