@@ -36,7 +36,7 @@ class GodSpider(scrapy.Spider):
         yield response.follow(pantheons_page_link, self.parse_pantheon)
     
     def parse_pantheon(self, response):
-        god_page_links = response.css('.search-result a')
+        god_page_links = response.css('.clickable-panel a')
         yield from response.follow_all(god_page_links, self.parse_god)
 
     def parse_god(self, response):

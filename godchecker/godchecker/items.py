@@ -24,7 +24,7 @@ def parse_pronounciation(text):
     return text
 
 def parse_gender(text):
-    if len(text) == 0:
+    if len(text) == 0 or text == "Sorry, we don't know":
         return None
     return text
 
@@ -59,9 +59,9 @@ def parse_role(text):
     return text
 
 def parse_good_evil(text):
-    if text == 'good_evil':
+    if text == 'good_evil' or text == 'Unknown at present':
         return None
-    return text
+    return text.split(',')[0]
 
 def parse_birth_death_dates(text):
     if len(text) == 0:
