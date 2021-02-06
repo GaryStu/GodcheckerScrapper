@@ -49,4 +49,70 @@ The downloader is responsible for fetching web pages and feeding them to the eng
 ### 5. Item Pipeline
 The Item Pipeline is responsible for processing the items once they have been extracted (or scraped) by the spiders. The tasks include cleansing, validation, and persistence (storing item to the database). This is where most processing and storage works exist.
 
+## Setup
+We will be using Python 3 for this project.
+
+### Install pip
+pip is a handy tool to install libraries/dependencies for your python programs. pip should already come installed on your system. Head over to https://pip.pypa.io/en/stable/installing/ for steps to install pip if it's not available.
+
+### Install virtualenv
+We use virtualenv to create an isolated running environment to install dependencies and launch the web application. Head over to https://virtualenv.pypa.io/en/stable/installation/ for instructions to install virtualenv
+
+### Install dependencies
+Once you have pip and virtualenv set up, we can proceed to create the environment to run our web applications:
+
+```bash
+# Locate the path for the Python 3 installation
+which python3
+
+# Create the virtual environment in a folder named "env" in the current directory
+virtualenv env --python=<path_to_python_3>
+
+# Start the virtual environment
+source env/bin/activate
+
+# Install the required dependencies/libraries
+pip install -r requirements.txt
+```
+
+You'll see `(env)` show up at the beginning of the command line if you've started virtual environment successfully. To check if the dependencies are installed correctly, run `pip freeze`.
+
+# Running the scrapper
+
+We will start by scrapping the website using `scrapy crawl`. To start scrapping the data, go to the `/godchecker` directory and run the command below:
+
+```bash
+scrapy crawl godchecker -O godchecker.json
+```
+
+If you want to save the logs in a file called `godchecker.log`, you can override the `--logfile` option:
+```bash
+scrapy crawl godchecker -O godchecker.json --logfile godchecker.log
+```
+
+After Scrapy finished scrapping the website (will only take 1-2 minutes). There will be SQLite3 file generated under `/godchecker/god.db`. 
+
+There is also a script `viewCreator.py` that would generate SQL views that partition the main table according to its pantheons as well as generate a view that contains interesting statistics regarding the database. To generate the views and see the list of all views, run the commands:
+```bash
+# To generate the views
+python viewCreator.py
+```
+
+After generating the database and views, run the `sqlite3` command to access the database:
+```bash
+sqlite3 god.db
+```
+While inside the database, you can run your usual SQL queries to explore the database. To see what views are created for each pantheon you can use the command:
+```bash
+SELECT name from sqlite_master WHERE type ='view';
+```
+Examples of the view names are `polynesian_gods`, `maori_gods`, and `japanese_gods`. The statistics view is stored under `statistics`.
+
+
+
+
+
+
+
+
 
