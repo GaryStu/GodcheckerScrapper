@@ -18,6 +18,7 @@ class GodcheckerPipeline(object):
         self.init_db()
 
     def init_db(self):
+        self.cursor.execute("DROP TABLE IF EXISTS 'gods';")
         self.cursor.execute(
             "CREATE TABLE IF NOT EXISTS gods ("
             + "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"

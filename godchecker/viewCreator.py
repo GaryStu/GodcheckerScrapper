@@ -25,26 +25,48 @@ class ViewCreator():
         
     def create_statistics_view(self):
         # Create a view for general statistics for each mythology
-        mythologies = self.cursor.execute("SELECT DISTINCT mythology FROM gods;").fetchall()
+        # mythologies = self.cursor.execute("SELECT DISTINCT mythology FROM gods;").fetchall()
+        
+        self.cursor.execute("DROP VIEW IF EXISTS 'statistics';")
         self.cursor.execute(
             "CREATE VIEW statistics AS " +
-            "SELECT * FROM " + 
-            "(SELECT mythology, COUNT(DISTINCT NAME) as distinct_name_count FROM gods GROUP BY mythology) " +
+            "SELECT * FROM " +
+            "(SELECT mythology, COUNT(name) as distinct_name_count FROM gods GROUP BY mythology) " +
             "NATURAL JOIN " +
-            "(SELECT mythology, COUNT(DISTINCT NAME) as good_gods_count FROM gods WHERE good_evil ='GREAT' OR good_evil='GOOD' OR good_evil='OKAY' GROUP BY mythology) " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(name) FROM gods WHERE good_evil in ('GREAT', 'GOOD', 'OKAY') GROUP BY mythology)  " +
+            "SELECT mythology, 0 AS good_gods_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
             "NATURAL JOIN " +
-            "(SELECT mythology, COUNT(DISTINCT NAME) as evil_gods_count FROM gods WHERE good_evil ='NOT OKAY' OR good_evil='BAD' OR good_evil='TOTALLY EVIL' GROUP BY mythology) " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(name) FROM gods WHERE good_evil in ('NOT OKAY', 'BAD', 'TOTALLY EVIL') GROUP BY mythology)  " +
+            "SELECT mythology, 0 AS evil_gods_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
             "NATURAL JOIN " +
-            "(SELECT mythology, COUNT(*) as good_male_count FROM gods WHERE gender='Male' AND (good_evil ='GREAT' OR good_evil='GOOD' OR good_evil='OKAY') GROUP BY mythology); " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(name) FROM gods WHERE good_evil='NEUTRAL' GROUP BY mythology)  " +
+            "SELECT mythology, 0 AS neutral_gods_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
             "NATURAL JOIN " +
-            "(SELECT mythology, COUNT(*) as evil_male_count FROM gods WHERE gender='Male' AND (good_evil ='NOT OKAY' OR good_evil='BAD' OR good_evil='TOTALLY EVIL') GROUP BY mythology); " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(name) FROM gods WHERE gender='Male' AND (good_evil in ('NOT OKAY', 'BAD', 'TOTALLY EVIL')) GROUP BY mythology)  " +
+            "SELECT mythology, 0 AS evil_males_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
             "NATURAL JOIN " +
-            "(SELECT mythology, COUNT(*) as good_female_count FROM gods WHERE gender='Female' AND (good_evil ='GREAT' OR good_evil='GOOD' OR good_evil='OKAY') GROUP BY mythology); " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(name) FROM gods WHERE gender='Female' AND (good_evil in ('NOT OKAY', 'BAD', 'TOTALLY EVIL')) GROUP BY mythology)  " +
+            "SELECT mythology, 0 AS evil_females_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
             "NATURAL JOIN " +
-            "(SELECT mythology, COUNT(*) as evil_female_count FROM gods WHERE gender='Female' AND (good_evil ='NOT OKAY' OR good_evil='BAD' OR good_evil='TOTALLY EVIL') GROUP BY mythology); " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(name) FROM gods WHERE gender='Male' AND (good_evil in ('GREAT', 'GOOD', 'OKAY')) GROUP BY mythology)  " +
+            "SELECT mythology, 0 AS good_males_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
             "NATURAL JOIN " +
-
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(name) FROM gods WHERE gender='Female' AND (good_evil in ('GREAT', 'GOOD', 'OKAY')) GROUP BY mythology)  " +
+            "SELECT mythology, 0 AS good_females_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
+            "NATURAL JOIN " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(DISTINCT type) FROM gods GROUP BY mythology) " +
+            "SELECT mythology, 0 AS distinct_types_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
+            "NATURAL JOIN " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(DISTINCT celeb_or_feast_day) FROM gods GROUP BY mythology) " +
+            "SELECT mythology, 0 AS feast_day_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
+            "NATURAL JOIN " +
+            "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(DISTINCT area_of_expertise) FROM gods GROUP BY mythology)  " +
+            "SELECT mythology, 0 AS area_of_expertise_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
+            "NATURAL JOIN " +
+            "(SELECT mythology, AVG(CAST(popularity_index AS INT)) FROM gods GROUP BY mythology) " +
+            ";"
         )
+        self.connection.commit()
 
 
 
@@ -55,4 +77,5 @@ class ViewCreator():
 if __name__ == '__main__':
     viewCreator = ViewCreator()
     viewCreator.create_mythology_view()
+    viewCreator.create_statistics_view()
     
