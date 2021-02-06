@@ -68,12 +68,6 @@ class ViewCreator():
         )
         self.connection.commit()
 
-
-
-        
-        
-
-
 if __name__ == '__main__':
     viewCreator = ViewCreator()
     viewCreator.create_mythology_view()
