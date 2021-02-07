@@ -63,7 +63,7 @@ class ViewCreator():
             "(WITH cte(mythology, count) AS (SELECT mythology, COUNT(DISTINCT area_of_expertise) FROM gods GROUP BY mythology)  " +
             "SELECT mythology, 0 AS area_of_expertise_count FROM (SELECT mythology FROM gods EXCEPT SELECT mythology FROM cte) UNION SELECT * FROM cte) " +
             "NATURAL JOIN " +
-            "(SELECT mythology, AVG(CAST(popularity_index AS INT)) FROM gods GROUP BY mythology) " +
+            "(SELECT mythology, AVG(CAST(popularity_index AS INT)) AS avg_popularity_index FROM gods GROUP BY mythology) " +
             ";"
         )
         self.connection.commit()
