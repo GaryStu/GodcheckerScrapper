@@ -85,6 +85,9 @@ You'll see `(env)` show up at the beginning of the command line if you've starte
 We will start by scrapping the website using `scrapy crawl`. To start scrapping the data, go to the `/godchecker` directory and run the command below:
 
 ```bash
+# Go to the godchecker directory
+cd godchecker
+# Run Scrapy
 scrapy crawl godchecker -O godchecker.json
 ```
 
