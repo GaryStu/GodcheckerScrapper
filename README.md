@@ -102,6 +102,11 @@ After generating the database and views, run the `sqlite3` command to access the
 ```bash
 sqlite3 god.db
 ```
+To display the headers and the align the rows based on the columns, use these commands:
+```sql
+.header on
+.mode column
+```
 While inside the database, you can run your usual SQL queries to explore the database. To see what views are created for each pantheon you can use the command:
 ```sql
 SELECT name from sqlite_master WHERE type ='view';
@@ -120,7 +125,70 @@ SELECT name from polynesian_gods WHERE good_evil in ('NOT OKAY', 'BAD', 'TOTALLY
 ```
 The historian does not need to specify the mythology he is using all the time.
 
-In addition, to help generate some insights about the data, I have created another view that contains interesting statistics that could prove useful when analysing the data. The statistics are by no means complete, and I would like to hear more about suggestion regarding what results are relevant for the data. The view is created by using `NATURAL JOIN` on the `mythology` attribute. The schema is as follows:
+In addition, to help generate some insights about the data, I have created another view that contains interesting statistics that could prove useful when analysing the data. The statistics are by no means complete, and I would like to hear more about suggestion regarding what results are relevant for the data. The view is created by using `NATURAL JOIN` on the `mythology` attribute. Each column row would be a statistics for that particular mythology. The view schema is as follows:
+
+![Statistics view cannot be displayed](images/statistics.png "Statistics view")
+
+## Interesting statistics and insights
+
+From the views and the statistics views, one can derive some interesting insights about the data:
+
+> Disclaimer: The analysis only depends on the pantheons that are available from [Godchecker](https://www.godchecker.com/)
+
+### Mythology with the most evil gods
+```sql
+SELECT mythology, evil_gods_count from statistics ORDER BY evil_gods_count DESC;
+```
+It can be seen that the most potrayal of evil gods exist in Hindu mythology (43 gods), followed by African mythology (20 gods).
+
+### Mythology with the most good/benevolent gods
+```sql
+SELECT mythology, good_gods_count from statistics ORDER BY good_gods_count DESC;
+```
+
+Interestingly, the portrayal for the most good/benevolent gods also held by Hindu mythology (133 gods), followed by African mythology (109 gods).
+This could happen due to multiple reasons:
+1. There are multiple gods where the `Good/Evil Rating` are set to `Unknown at present`, or `Neutral`. Hence it cannot be categorized under good/evil spectrum.
+2. Some large mythology is divided into smaller mythologies. Hence, large mythology that does not have a lot of sub-mythologies have more gods inside and therefore the result might be skewed.
+
+### Gender that is often portrayed as good
+```sql
+SELECT SUM(good_males_count), SUM(good_females_count) from statistics;
+```
+There are 346 male gods and 159 female gods that are portrayed as good. This could partly due to number of male gods outweighing the number of female gods.
+```sql
+SELECT SUM(evil_males_count), SUM(evil_females_count) from statistics;
+```
+
+### Gender that is often portrayed as evil
+
+There are 96 male gods and 44 female gods that are portrayed as evil. Again, this could partly due to the number of male gods outweighing the number of female gods.
+
+However, further analysis reveals an interesting result. By finding out the number of male gods compared to female gods:
+```sql
+SELECT COUNT(name) FROM gods WHERE gender = 'Male';
+SELECT COUNT(name) FROM gods WHERE gender = 'Female';
+```
+We have 2438 male gods and 1190 female gods. The female and male ratio is 0.48. If you see from the portrayal of evil and good gods you can see similar ratio (0.45 and 0.46). This could indicate that the good/evil spread among both genders are similar.
+
+### Mythology that gets you the most holidays
+
+This is calculated by finding the feast_day_count from statistics.
+
+```sql
+SELECT mythology, feast_day_count FROM statistics ORDER BY feast_day_count DESC;
+```
+
+The result indicates that Christian religion has the most feast day count among all the mythologies.
+
+### Mythology that has the most varied types (e.g. spirits, god, and legendary mortal)
+
+```sql
+SELECT mythology, distinct_types_count FROM statistics ORDER BY distinct_types_count DESC;
+```
+
+The result shows that Hindu mythology has the most types of beings (19 types) followed by Australian mythology (16 types).
+
 
 
 
