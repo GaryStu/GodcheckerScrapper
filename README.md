@@ -103,12 +103,24 @@ After generating the database and views, run the `sqlite3` command to access the
 sqlite3 god.db
 ```
 While inside the database, you can run your usual SQL queries to explore the database. To see what views are created for each pantheon you can use the command:
-```bash
+```sql
 SELECT name from sqlite_master WHERE type ='view';
 ```
 Examples of the view names are `polynesian_gods`, `maori_gods`, and `japanese_gods`. The statistics view is stored under `statistics`.
 
+## Database Design
 
+The data extracted by the scrapper are stored in a "master table" called `gods` which contains every possible attributes under the "Fact and Figures" section, the schema is as follows:
+
+![Master table schema cannot be displayed](images/schema.png "Master schema")
+
+Most of the data extracted have missing values except for  `name` and `mythology`. Since the data are used by a historian to write a book on Religions and Mythology through time. I decided to create a `VIEW` for every single mythology / religion. This helps the historian to focus on the particular mythology / religion while writing a chapter about it. For example, if the historian would like to search for all the evil polynesian gods, he just needs to query:
+```sql
+SELECT name from polynesian_gods WHERE good_evil in ('NOT OKAY', 'BAD', 'TOTALLY EVIL');
+```
+The historian does not need to specify the mythology he is using all the time.
+
+In addition, to help generate some insights about the data, I have created another view that contains interesting statistics that could prove useful when analysing the data. The statistics are by no means complete, and I would like to hear more about suggestion regarding what results are relevant for the data. The view is created by using `NATURAL JOIN` on the `mythology` attribute. The schema is as follows:
 
 
 
