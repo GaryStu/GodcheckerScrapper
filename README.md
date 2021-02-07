@@ -58,6 +58,9 @@ pip is a handy tool to install libraries/dependencies for your python programs. 
 ### Install virtualenv
 We use virtualenv to create an isolated running environment to install dependencies and launch the web application. Head over to https://virtualenv.pypa.io/en/stable/installation/ for instructions to install virtualenv
 
+### Install SQLite3 
+The RDBMS used is SQLite3, you can use this ![tutorial](https://www.sqlitetutorial.net/download-install-sqlite/) to install SQLite3. The SQLite3 command needs to be used to explore the database.
+
 ### Install dependencies
 Once you have pip and virtualenv set up, we can proceed to create the environment to run our web applications:
 
@@ -82,6 +85,9 @@ You'll see `(env)` show up at the beginning of the command line if you've starte
 We will start by scrapping the website using `scrapy crawl`. To start scrapping the data, go to the `/godchecker` directory and run the command below:
 
 ```bash
+# Go to the godchecker directory
+cd godchecker
+# Run Scrapy
 scrapy crawl godchecker -O godchecker.json
 ```
 
@@ -102,6 +108,11 @@ After generating the database and views, run the `sqlite3` command to access the
 ```bash
 sqlite3 god.db
 ```
+To display the headers and the align the rows based on the columns, use these commands:
+```sql
+.header on
+.mode column
+```
 While inside the database, you can run your usual SQL queries to explore the database. To see what views are created for each pantheon you can use the command:
 ```sql
 SELECT name from sqlite_master WHERE type ='view';
@@ -114,17 +125,88 @@ The data extracted by the scrapper are stored in a "master table" called `gods` 
 
 ![Master table schema cannot be displayed](images/schema.png "Master schema")
 
-Most of the data extracted have missing values except for  `name` and `mythology`. Since the data are used by a historian to write a book on Religions and Mythology through time. I decided to create a `VIEW` for every single mythology / religion. This helps the historian to focus on the particular mythology / religion while writing a chapter about it. For example, if the historian would like to search for all the evil polynesian gods, he just needs to query:
+Most of the data extracted have missing values except for  `name` and `mythology`. Since the data are used by a historian to write a book on Religions and Mythology through time, I decided to create a `VIEW` for every single mythology / religion. This helps the historian to focus on the particular mythology / religion while writing a chapter about it. For example, if the historian would like to search for all the evil polynesian gods, he just needs to query:
 ```sql
 SELECT name from polynesian_gods WHERE good_evil in ('NOT OKAY', 'BAD', 'TOTALLY EVIL');
 ```
 The historian does not need to specify the mythology he is using all the time.
 
-In addition, to help generate some insights about the data, I have created another view that contains interesting statistics that could prove useful when analysing the data. The statistics are by no means complete, and I would like to hear more about suggestion regarding what results are relevant for the data. The view is created by using `NATURAL JOIN` on the `mythology` attribute. The schema is as follows:
+In addition, to help generate some insights about the data, I have created another view that contains interesting statistics that could prove useful when analysing the data. The statistics are by no means complete, and I would like to hear more about suggestion regarding what results are relevant for the data. The view is created by using `NATURAL JOIN` on the `mythology` attribute. Each column row would be a statistics for that particular mythology. The view schema is as follows:
 
+![Statistics view cannot be displayed](images/statistics.png "Statistics view")
 
+## Interesting statistics and insights
 
+From the views and the statistics views, one can derive some interesting insights about the data:
 
+> Disclaimer: The analysis only depends on the pantheons that are available from [Godchecker](https://www.godchecker.com/)
 
+### Mythology with the most evil gods
+```sql
+SELECT mythology, evil_gods_count from statistics ORDER BY evil_gods_count DESC;
+```
+It can be seen that the most potrayal of evil gods exist in Hindu mythology (43 gods), followed by African mythology (20 gods).
 
+### Mythology with the most good/benevolent gods
+```sql
+SELECT mythology, good_gods_count from statistics ORDER BY good_gods_count DESC;
+```
 
+Interestingly, the portrayal for the most good/benevolent gods also held by Hindu mythology (133 gods), followed by African mythology (109 gods).
+This could happen due to multiple reasons:
+1. There are multiple gods where the `Good/Evil Rating` are set to `Unknown at present`, or `Neutral`. Hence it cannot be categorized under good/evil spectrum.
+2. Some large mythology is divided into smaller mythologies. Hence, large mythology that does not have a lot of sub-mythologies have more gods inside and therefore the result might be skewed.
+
+### Gender that is often portrayed as good
+```sql
+SELECT SUM(good_males_count), SUM(good_females_count) from statistics;
+```
+There are 346 male gods and 159 female gods that are portrayed as good. This could partly due to number of male gods outweighing the number of female gods.
+```sql
+SELECT SUM(evil_males_count), SUM(evil_females_count) from statistics;
+```
+
+### Gender that is often portrayed as evil
+
+There are 96 male gods and 44 female gods that are portrayed as evil. Again, this could partly due to the number of male gods outweighing the number of female gods.
+
+However, further analysis reveals an interesting result. By finding out the number of male gods compared to female gods:
+```sql
+SELECT COUNT(name) FROM gods WHERE gender = 'Male';
+SELECT COUNT(name) FROM gods WHERE gender = 'Female';
+```
+We have 2438 male gods and 1190 female gods. The female and male ratio is 0.48. If you see from the portrayal of evil and good gods you can see similar ratio (0.45 and 0.46). This could indicate that the good/evil spread among both genders are similar.
+
+### Mythology that gets you the most holidays
+
+This is calculated by finding the feast_day_count from statistics.
+
+```sql
+SELECT mythology, feast_day_count FROM statistics ORDER BY feast_day_count DESC;
+```
+
+The result indicates that Christian religion has the most feast day count among all the mythologies.
+
+### Mythology that has the most varied types (e.g. spirits, god, and legendary mortal)
+
+```sql
+SELECT mythology, distinct_types_count FROM statistics ORDER BY distinct_types_count DESC;
+```
+
+The result shows that Hindu mythology has the most types of beings (19 types) followed by Australian mythology (16 types).
+
+### Mythology that has the highest average popularity index
+
+```sql
+SELECT mythology, avg_popularity_index FROM statistics ORDER BY avg_popularity_index ASC;
+```
+
+Christian mythology has the lowest popularity index (most popular) with average popularity index of 513.
+
+### Mythology that whose gods has highest number of distinct area of expertise
+
+```sql
+SELECT mythology, distinct_types_count FROM statistics ORDER BY distinct_types_count DESC;
+```
+
+Hindu mythology has the highest number of distinct area of expertise (19), followed by Australian Aboriginal (16).
