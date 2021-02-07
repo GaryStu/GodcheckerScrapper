@@ -198,5 +198,15 @@ The result shows that Hindu mythology has the most types of beings (19 types) fo
 ### Mythology that has the highest average popularity index
 
 ```sql
-SELECT mythology, avg_popularity_index FROM statistics ORDER BY avg_popularity_index DESC;
+SELECT mythology, avg_popularity_index FROM statistics ORDER BY avg_popularity_index ASC;
 ```
+
+Christian mythology has the lowest popularity index (most popular) with average popularity index of 513.
+
+### Mythology that whose gods has highest number of distinct area of expertise
+
+```sql
+SELECT mythology, distinct_types_count FROM statistics ORDER BY distinct_types_count DESC;
+```
+
+Hindu mythology has the highest number of distinct area of expertise (19), followed by Australian Aboriginal (16).
