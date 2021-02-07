@@ -58,6 +58,9 @@ pip is a handy tool to install libraries/dependencies for your python programs. 
 ### Install virtualenv
 We use virtualenv to create an isolated running environment to install dependencies and launch the web application. Head over to https://virtualenv.pypa.io/en/stable/installation/ for instructions to install virtualenv
 
+### Install SQLite3 
+The RDBMS used is SQLite3, you can use this ![tutorial](https://www.sqlitetutorial.net/download-install-sqlite/) to install SQLite3. The SQLite3 command needs to be used to explore the database.
+
 ### Install dependencies
 Once you have pip and virtualenv set up, we can proceed to create the environment to run our web applications:
 
@@ -119,7 +122,7 @@ The data extracted by the scrapper are stored in a "master table" called `gods` 
 
 ![Master table schema cannot be displayed](images/schema.png "Master schema")
 
-Most of the data extracted have missing values except for  `name` and `mythology`. Since the data are used by a historian to write a book on Religions and Mythology through time. I decided to create a `VIEW` for every single mythology / religion. This helps the historian to focus on the particular mythology / religion while writing a chapter about it. For example, if the historian would like to search for all the evil polynesian gods, he just needs to query:
+Most of the data extracted have missing values except for  `name` and `mythology`. Since the data are used by a historian to write a book on Religions and Mythology through time, I decided to create a `VIEW` for every single mythology / religion. This helps the historian to focus on the particular mythology / religion while writing a chapter about it. For example, if the historian would like to search for all the evil polynesian gods, he just needs to query:
 ```sql
 SELECT name from polynesian_gods WHERE good_evil in ('NOT OKAY', 'BAD', 'TOTALLY EVIL');
 ```
@@ -188,11 +191,3 @@ SELECT mythology, distinct_types_count FROM statistics ORDER BY distinct_types_c
 ```
 
 The result shows that Hindu mythology has the most types of beings (19 types) followed by Australian mythology (16 types).
-
-
-
-
-
-
-
-
