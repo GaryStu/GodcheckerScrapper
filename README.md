@@ -194,3 +194,9 @@ SELECT mythology, distinct_types_count FROM statistics ORDER BY distinct_types_c
 ```
 
 The result shows that Hindu mythology has the most types of beings (19 types) followed by Australian mythology (16 types).
+
+### Mythology that has the highest average popularity index
+
+```sql
+SELECT mythology, avg_popularity_index FROM statistics ORDER BY avg_popularity_index DESC;
+```
